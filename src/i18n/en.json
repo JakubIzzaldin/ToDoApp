@@ -1,0 +1,15 @@
+{
+  "app.title": "Carvago Frontend Assignment",
+  "app.description": "Assignment in React.js for developers who want to join our team.",
+  "welcome.message": "Welcome to Carvago Front-End Assignment",
+  "popover.edit": "Edit",
+  "popover.delete": "Delete",
+  "popover.deleteList": "Delete list",
+  "popover.MarkAllDone": "Edit",
+  "popover.EditTask": "Edit task",
+  "popover.ShowAllTask": "Show all tasks",
+  "popover.ViewCompletedTasks": "View completed tasks",
+  "popover.ClearAll": "Clear all",
+  "popover.ClearAllDoneTask": "Clear all done task "
+
+}
