@@ -11,10 +11,16 @@ export const AppTabs = ({tabTextStyleOveride, tabsConfig}: AppTabsProps) => {
     tabTextStyleOveride || getTextStyles({color: 'dark', variant: 'body', fontWeight: 'medium'});
 
   const tabListElement = tabsConfig.map((item) => (
-    <Tab style={resultTextStyle}>{item.tabText}</Tab>
+    <Tab style={resultTextStyle} key={item.tabText}>
+      {item.tabText}
+    </Tab>
   ));
 
-  const tabPanelElement = tabsConfig.map((item) => <TabPanel px={0}>{item.tabContent}</TabPanel>);
+  const tabPanelElement = tabsConfig.map((item) => (
+    <TabPanel px={0} key={item.tabText}>
+      {item.tabContent}
+    </TabPanel>
+  ));
 
   return (
     <Tabs position="relative" variant="unstyled">

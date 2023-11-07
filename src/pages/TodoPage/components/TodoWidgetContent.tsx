@@ -1,17 +1,19 @@
-import {Box, Checkbox, HStack, Icon, IconButton, Spacer, useDisclosure} from '@chakra-ui/react';
+import {Box, Checkbox, HStack, Icon, IconButton, Spacer} from '@chakra-ui/react';
 import {AppText} from '../../../components/AppText/AppText';
 import {staticColors} from '../../../constants/colors';
 
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 import {AppPopover} from '../../../components/AppPopover/AppPopover';
 import {BsThreeDotsVertical} from 'react-icons/bs';
-import {useGetTodoPopoverMap} from '../hooks/useGetTodoPopoverMap';
+import {useGetTodoPopoverList} from '../hooks/useGetTodoPopoverList';
 import {TodoOptionsButton} from './TodoOptionsButton';
 import {sizes} from '../../../constants/sizes';
+import {WidgetEditTodoModal} from './WidgetEditTodoModal';
+import {WidgetPrioritiesType} from './TodoWidget';
 
 type AppWidgetContentProps = {
   text: string;
-
+  priority: WidgetPrioritiesType;
   onChangeChecked: (isChecked: boolean) => void;
   isChecked: boolean;
   todoId: string;
@@ -23,9 +25,13 @@ export const TodoWidgetContent = ({
   isChecked,
   todoId,
   cardId,
+  priority,
 }: AppWidgetContentProps) => {
-  const {onOpen} = useDisclosure();
-  const popoversButtonsParamMap = useGetTodoPopoverMap('widget', onOpen);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const popoversButtonsParamList = useGetTodoPopoverList('widget', () => {
+    setIsModalOpen(true);
+  });
   const onCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     onChangeChecked(event.target.checked);
   };
@@ -64,7 +70,7 @@ export const TodoWidgetContent = ({
         }
         placement={'bottom-end'}
       >
-        {popoversButtonsParamMap.map((item) => (
+        {popoversButtonsParamList.map((item) => (
           <TodoOptionsButton
             {...item}
             key={item.text}
@@ -73,6 +79,14 @@ export const TodoWidgetContent = ({
             }}
           />
         ))}
+        <WidgetEditTodoModal
+          widgetPriority={priority}
+          text={text}
+          onClose={() => setIsModalOpen(false)}
+          isOpen={isModalOpen}
+          todoId={todoId}
+          cardId={cardId}
+        />
       </AppPopover>
     </HStack>
   );

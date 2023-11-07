@@ -8,7 +8,9 @@ export type TodoType = {
 };
 export type TodosType = {[key: string]: TodoType};
 
-export type TodosSliceType = {[key: string]: {todos: TodosType; title: string}};
+export type TodosSliceType = {
+  [key: string]: {todos: TodosType; title: string};
+};
 
 const todosSlice = createSlice({
   name: 'todos',
@@ -25,12 +27,41 @@ const todosSlice = createSlice({
   } as TodosSliceType,
   reducers: {
     addCard: (state, action: PayloadAction<{cardId: string; cardTitle: string}>) => {
-      state[action.payload.cardId] = {todos: {}, title: action.payload.cardTitle};
+      state[action.payload.cardId] = {
+        todos: {},
+        title: action.payload.cardTitle,
+      };
     },
     deleteCard: (state, action: PayloadAction<{cardId: string}>) => {
       delete state[action.payload.cardId];
     },
+    deleteCardList: (state, action: PayloadAction<{cardId: string}>) => {
+      state[action.payload.cardId].todos = {};
+    },
+    editCardTitle: (state, action: PayloadAction<{cardId: string; cardTitle: string}>) => {
+      state[action.payload.cardId].title = action.payload.cardTitle;
+    },
+    clearAllDoneTask: (state) => {
+      const cardKeys = Object.keys(state).map((cardKey) => cardKey);
 
+      cardKeys.forEach((cardId) => {
+        Object.keys(state[cardId].todos).forEach((todoId) => {
+          if (state[cardId].todos[todoId].isDone) delete state[cardId].todos[todoId];
+        });
+      });
+    },
+    clearAllCards: (state) => {
+      const cardKeys = Object.keys(state).map((cardKey) => cardKey);
+      cardKeys.forEach((cardId) => {
+        delete state[cardId];
+      });
+    },
+
+    setAllTodosToTrue: (state, action: PayloadAction<{cardId: string}>) => {
+      Object.keys(state[action.payload.cardId].todos).forEach((value) => {
+        state[action.payload.cardId].todos[value].isDone = true;
+      });
+    },
     renameCardTitle: (state, action: PayloadAction<{cardId: string; cardTitle: string}>) => {
       state[action.payload.cardId].title = action.payload.cardTitle;
     },
@@ -66,14 +97,32 @@ const todosSlice = createSlice({
         {
           todoId: string;
           cardId: string;
-        } & TodoType
+          isDone?: boolean;
+        } & Omit<TodoType, 'isDone'>
       >
     ) => {
+      const resultIsDone =
+        action.payload.isDone !== undefined
+          ? action.payload.isDone
+          : state[action.payload.cardId].todos[action.payload.todoId].isDone;
+
       state[action.payload.cardId].todos[action.payload.todoId].text = action.payload.text;
       state[action.payload.cardId].todos[action.payload.todoId].priority = action.payload.priority;
+      state[action.payload.cardId].todos[action.payload.todoId].isDone = resultIsDone;
     },
   },
 });
 
-export const {addTodo, deleteTodo, updateTodo, addCard, deleteCard} = todosSlice.actions;
+export const {
+  addTodo,
+  deleteTodo,
+  updateTodo,
+  addCard,
+  deleteCard,
+  setAllTodosToTrue,
+  editCardTitle,
+  clearAllDoneTask,
+  clearAllCards,
+  deleteCardList,
+} = todosSlice.actions;
 export default todosSlice.reducer;

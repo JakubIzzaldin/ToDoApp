@@ -1,30 +1,31 @@
-import {Box, HStack, Icon, IconButton, Spacer} from '@chakra-ui/react';
 import {AppText} from '../../../components/AppText/AppText';
-import {useGetTodoPopoverList} from '../hooks/useGetTodoPopoverList';
-import {BsThreeDotsVertical} from 'react-icons/bs';
-import {AppPopover} from '../../../components/AppPopover/AppPopover';
+import {Box, Flex, Icon, IconButton, Spacer} from '@chakra-ui/react';
+import {AiFillSetting} from 'react-icons/ai';
+import {MdSort} from 'react-icons/md';
 import React, {useState} from 'react';
+import {useGetTodoPopoverList} from '../hooks/useGetTodoPopoverList';
 
 import {TodoOptionsButton} from './TodoOptionsButton';
-import {CardEditTodoModal} from './CardEditModal';
+import {AppPopover} from '../../../components/AppPopover/AppPopover';
 
-type CardTodoHeaderProps = {
-  text: string;
-  cardId: string;
-};
-export const TodoCardHeader = ({text, cardId}: CardTodoHeaderProps) => {
+export const TodoPageHeader = () => {
+  const pageHeaderParamsList = useGetTodoPopoverList('pageHeaderSettings');
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const popoversButtonsParamList = useGetTodoPopoverList('cardHeader', () => {
-    setIsModalOpen(true);
-  });
   return (
-    <HStack>
+    <Flex
+      width={'100%'}
+      height={'48px'}
+      backgroundColor={'white'}
+      px={'10px'}
+      alignItems={'center'}
+    >
       <AppText variant={'heading4'} fontWeight={'medium'}>
-        {text}
+        Todo list
       </AppText>
       <Spacer />
+      <IconButton aria-label={'button'} backgroundColor={'inherit'} color={'black'}>
+        <Icon as={MdSort} />
+      </IconButton>
       <AppPopover
         onClose={() => {
           setIsPopoverOpen(false);
@@ -41,29 +42,23 @@ export const TodoCardHeader = ({text, cardId}: CardTodoHeaderProps) => {
                 setIsPopoverOpen(true);
               }}
             >
-              <Icon as={BsThreeDotsVertical} />
+              <Icon as={AiFillSetting} />
             </IconButton>
           </Box>
         }
         placement={'bottom-end'}
       >
-        {popoversButtonsParamList.map((item) => (
+        {pageHeaderParamsList.map((item) => (
           <TodoOptionsButton
             {...item}
             key={item.text}
             onClick={() => {
-              item.onAction(cardId, '');
+              item.onAction('cardId', '');
               setIsPopoverOpen(false);
             }}
           />
         ))}
-        <CardEditTodoModal
-          onClose={() => setIsModalOpen(false)}
-          isOpen={isModalOpen}
-          cardId={cardId}
-          text={text}
-        />
       </AppPopover>
-    </HStack>
+    </Flex>
   );
 };
